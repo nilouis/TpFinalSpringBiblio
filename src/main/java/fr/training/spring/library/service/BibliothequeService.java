@@ -20,4 +20,6 @@ public interface BibliothequeService {
     List<Bibliotheque> chercherBibliothequeParNomDeDirecteur(String nomAChercher);
 
     void updateBiliotheque(Bibliotheque bibliothqueAMAJ);
+
+    void deleteBibliotheque(long idASupprimer);
 }

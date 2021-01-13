@@ -76,8 +76,10 @@ public class LibraryController {
         bibliothequeService.updateBiliotheque(bibliothqueAMAJ);
     }
 
-    //Mettre à jour une bibliotheque si elle existe
-    public void patchBibliothequeVerif(/*id*/){
-
+    //Supprime une Bibliotheque
+    @ApiOperation(value="Supprimer une bibliothèque pour un identifiant donné", nickname = "deleteBibliothequeById", notes="Supprime la bibliothque pour un id donné")
+    @DeleteMapping(value="/bibliotheque/{id}", produces = { "application/json" })
+    public void deleteBibliothequeById(@PathVariable(value="id") final long idASupprimer){
+        bibliothequeService.deleteBibliotheque(idASupprimer);
     }
 }
