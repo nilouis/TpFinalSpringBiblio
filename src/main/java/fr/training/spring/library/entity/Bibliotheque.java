@@ -9,20 +9,20 @@ public class Bibliotheque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private TypeDeBibliotheque type;
 
     @Embedded
     private Adresse adresse;
 
     @Embedded
-    private Directeur direceteur;
+    private Directeur directeur;
 
     public Bibliotheque(long id, TypeDeBibliotheque type, Adresse adresse, Directeur direceteur) {
         this.id = id;
         this.type = type;
         this.adresse = adresse;
-        this.direceteur = direceteur;
+        this.directeur = direceteur;
     }
 
     public Bibliotheque(){
@@ -54,10 +54,16 @@ public class Bibliotheque {
     }
 
     public Directeur getDireceteur() {
-        return direceteur;
+        return directeur;
     }
 
     public void setDireceteur(Directeur direceteur) {
-        this.direceteur = direceteur;
+        this.directeur = direceteur;
+    }
+
+    public void update(Bibliotheque bibliothqueAMAJ) {
+        this.setType(bibliothqueAMAJ.getType());
+        this.setDireceteur(bibliothqueAMAJ.getDireceteur());
+        this.setAdresse(bibliothqueAMAJ.getAdresse());
     }
 }
