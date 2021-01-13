@@ -54,5 +54,10 @@ public class BibliothequeServiceImpl implements  BibliothequeService{
         bibliothequeDAO.save(bibliothequeExistante);
     }
 
+    @Override
+    public void deleteBibliotheque(long idASupprimer) {
+        bibliothequeDAO.deleteById(idASupprimer);
+    }
+
 
 }
