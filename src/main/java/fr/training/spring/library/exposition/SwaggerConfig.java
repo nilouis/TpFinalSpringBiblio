@@ -1,5 +1,5 @@
 
-package fr.training.spring.library;
+package fr.training.spring.library.exposition;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

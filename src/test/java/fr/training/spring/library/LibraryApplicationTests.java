@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
+import fr.training.spring.library.entity.Adresse;
+import fr.training.spring.library.entity.Bibliotheque;
+import fr.training.spring.library.entity.Directeur;
+import fr.training.spring.library.entity.TypeDeBibliotheque;
+import fr.training.spring.library.infrastructure.BibliothequeDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,28 +21,22 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import fr.training.spring.library.Address;
-import fr.training.spring.library.Director;
-import fr.training.spring.library.Library;
-import fr.training.spring.library.LibraryDAO;
-import fr.training.spring.library.Type;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("tp-spring-0")
-class LibraryApplicationTests {
+class BibliothequeApplicationTests {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
 
 	@Autowired
-	private LibraryDAO libraryDAO;
+	private BibliothequeDAO bibliothequeDAO;
 
-	public static final Library NATIONAL_LIBRARY_MONTREUIL = new Library(0L, Type.NATIONAL,
-			new Address(93, "Rue des Montreuil", 93100, "Montreuil"), new Director("Romain", "NOEL"));
-	public static final Library SCHOOL_LIBRARY_PARIS = new Library(0L, Type.SCHOOL,
-			new Address(75, "Rue de Paris", 75008, "Paris"), new Director("Garfield", "LECHAT"));
-	public static final Library PUBLIC_LIBRARY_VINCENNES = new Library(0L, Type.PUBLIC,
-			new Address(94, "Rue de Vincennes", 94200, "Vincennes"), new Director("Garfield", "LECHAT"));
+	public static final Bibliotheque NATIONAL_Bibliotheque_MONTREUIL = new Bibliotheque(0L, TypeDeBibliotheque.NATIONALE,
+			new Adresse(93, "Rue des Montreuil", 93100, "Montreuil"), new Directeur("Romain", "NOEL"));
+	public static final Bibliotheque SCHOOL_Bibliotheque_PARIS = new Bibliotheque(0L, TypeDeBibliotheque.SCOLAIRE,
+			new Adresse(75, "Rue de Paris", 75008, "Paris"), new Directeur("Garfield", "LECHAT"));
+	public static final Bibliotheque PUBLIC_Bibliotheque_VINCENNES = new Bibliotheque(0L, TypeDeBibliotheque.PUBLIQUE,
+			new Adresse(94, "Rue de Vincennes", 94200, "Vincennes"), new Directeur("Garfield", "LECHAT"));
 
 	// As long as we have some other integration tests, this is useless
 	// @Test
@@ -47,7 +46,7 @@ class LibraryApplicationTests {
 
 	@BeforeEach
 	public void reset() {
-		libraryDAO.deleteAll();
+		bibliothequeDAO.deleteAll();
 	}
 
 	@Nested
@@ -61,7 +60,7 @@ class LibraryApplicationTests {
 
 			// --------------- When ---------------
 			// I do a request on /libraries
-			final ResponseEntity<Library[]> response = restTemplate.getForEntity("/libraries", Library[].class);
+			final ResponseEntity<Bibliotheque[]> response = restTemplate.getForEntity("/bibliotheques", Bibliotheque[].class);
 
 			// --------------- Then ---------------
 			// I get an empty list and a response code 200
@@ -70,15 +69,15 @@ class LibraryApplicationTests {
 		}
 
 		@Test
-		@DisplayName("should return one library when 1 library was created beforehand")
+		@DisplayName("should return one Bibliotheque when 1 Bibliotheque was created beforehand")
 		void test_read_all_2() {
 			// --------------- Given ---------------
 			// The DB has been reset (see method annotated with @BeforeEach)
-			libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
+			bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
 
 			// --------------- When ---------------
-			// I do a request on /libraries
-			final ResponseEntity<Library[]> response = restTemplate.getForEntity("/libraries", Library[].class);
+			// I do a request on /bibliotheques
+			final ResponseEntity<Bibliotheque[]> response = restTemplate.getForEntity("/bibliotheques", Bibliotheque[].class);
 
 			// --------------- Then ---------------
 			// I get an empty list and a response code 200
@@ -89,143 +88,143 @@ class LibraryApplicationTests {
 	}
 
 	@Test
-	@DisplayName("Api POST:/libraries should return a status created with ID of created library when passing a correct library")
+	@DisplayName("Api POST:/bibliotheques should return a status created with ID of created Bibliotheque when passing a correct Bibliotheque")
 	void test_create_1() {
 		// --------------- Given ---------------
 		// The DB has been reset (see method annotated with @BeforeEach)
 
 		// --------------- When ---------------
-		// I do a request on /libraries
-		final ResponseEntity<Long> response = restTemplate.postForEntity("/libraries", NATIONAL_LIBRARY_MONTREUIL,
+		// I do a request on /bibliotheques
+		final ResponseEntity<Long> response = restTemplate.postForEntity("/bibliotheques", NATIONAL_Bibliotheque_MONTREUIL,
 				Long.class);
 
 		// --------------- Then ---------------
-		// I get a success code, and a new library in the database with the given ID
+		// I get a success code, and a new Bibliotheque in the database with the given ID
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		final Long idCreated = response.getBody();
 		assertThat(idCreated).isNotNull().isPositive();
 
-		final Optional<Library> libraryFromDB = libraryDAO.findById(idCreated);
-		assertThat(libraryFromDB).isNotEmpty();
+		final Optional<Bibliotheque> BibliothequeFromDB = bibliothequeDAO.findById(idCreated);
+		assertThat(BibliothequeFromDB).isNotEmpty();
 
 		// Due to equals method not being implemented, we would need to compare field by
 		// fields...which is bad !
 		// We'll talk about equality in DDD further in this course.
 		// TODO : Check equality
-		assertThat(libraryFromDB.get().getType()).isEqualTo(NATIONAL_LIBRARY_MONTREUIL.getType());
+		assertThat(BibliothequeFromDB.get().getType()).isEqualTo(NATIONAL_Bibliotheque_MONTREUIL.getType());
 	}
 
 	@Nested
-	@DisplayName("Api PUT:/libraries")
+	@DisplayName("Api PUT:/bibliotheques")
 	class Test_update {
 		@Test
-		@DisplayName(" should update the library when passing on a correct ID")
+		@DisplayName(" should update the Bibliotheque when passing on a correct ID")
 		void test_update_1() {
 			// --------------- Given ---------------
-			final Library librarySaved = libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-			final Long idOfSavedLibrary = librarySaved.getId();
+			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
 
 			// --------------- When ---------------
-			restTemplate.put("/libraries/" + idOfSavedLibrary, SCHOOL_LIBRARY_PARIS);
+			restTemplate.put("/bibliotheques/" + idOfSavedBibliotheque, SCHOOL_Bibliotheque_PARIS);
 
 			// --------------- Then ---------------
-			final Optional<Library> libraryFromDB = libraryDAO.findById(idOfSavedLibrary);
-			assertThat(libraryFromDB).isNotEmpty();
+			final Optional<Bibliotheque> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
+			assertThat(BibliothequeFromDB).isNotEmpty();
 
 			// TODO : Check equality
-			assertThat(libraryFromDB.get().getType()).isEqualTo(SCHOOL_LIBRARY_PARIS.getType());
+			assertThat(BibliothequeFromDB.get().getType()).isEqualTo(SCHOOL_Bibliotheque_PARIS.getType());
 		}
 
 		@Test
 		@DisplayName(" should send an error when passing on an incorrect ID")
 		void test_update_2() {
 			// --------------- Given ---------------
-			final Library librarySaved = libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-			final Long idOfSavedLibrary = librarySaved.getId();
+			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
 
 			// --------------- When ---------------
-			final ResponseEntity<String> response = restTemplate.exchange("/libraries/" + Long.MAX_VALUE,
-					HttpMethod.PUT, new HttpEntity<>(SCHOOL_LIBRARY_PARIS), String.class);
+			final ResponseEntity<String> response = restTemplate.exchange("/bibliotheques/" + Long.MAX_VALUE,
+					HttpMethod.PUT, new HttpEntity<>(SCHOOL_Bibliotheque_PARIS), String.class);
 
 			// --------------- Then ---------------
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-			assertThat(response.getBody()).contains("LIBRARY NOT FOUND");
+			assertThat(response.getBody()).contains("Bibliotheque NOT FOUND");
 		}
 	}
 
 	@Nested
-	@DisplayName("Api DELETE:/libraries")
+	@DisplayName("Api DELETE:/bibliotheques")
 	class Test_delete {
 		@Test
-		@DisplayName(" should delete the library when passing on a correct ID")
+		@DisplayName(" should delete the Bibliotheque when passing on a correct ID")
 		void test_delete_1() {
 			// --------------- Given ---------------
-			final Library librarySaved = libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-			final Long idOfSavedLibrary = librarySaved.getId();
+			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
 
 			// --------------- When ---------------
-			restTemplate.delete("/libraries/" + idOfSavedLibrary);
+			restTemplate.delete("/bibliotheques/" + idOfSavedBibliotheque);
 
 			// --------------- Then ---------------
-			final Optional<Library> libraryFromDB = libraryDAO.findById(idOfSavedLibrary);
-			assertThat(libraryFromDB).isEmpty();
+			final Optional<Bibliotheque> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
+			assertThat(BibliothequeFromDB).isEmpty();
 		}
 
 		@Test
 		@DisplayName(" should send an error when passing on an incorrect ID")
 		void test_delete_2() {
 			// --------------- Given ---------------
-			final Library librarySaved = libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-			final Long idOfSavedLibrary = librarySaved.getId();
+			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
 
 			// --------------- When ---------------
-			final ResponseEntity<String> response = restTemplate.exchange("/libraries/" + Long.MAX_VALUE,
+			final ResponseEntity<String> response = restTemplate.exchange("/bibliotheques/" + Long.MAX_VALUE,
 					HttpMethod.DELETE, null, String.class);
 
 			// --------------- Then ---------------
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-			assertThat(response.getBody()).contains("LIBRARY NOT FOUND");
+			assertThat(response.getBody()).contains("Bibliotheque NOT FOUND");
 		}
 	}
 
 	@Test
-	@DisplayName("Api GET:/libraries/type/{type} should return all NATIONAL libraries when passing NATIONAL as parameter")
+	@DisplayName("Api GET:/bibliotheques/type/{type} should return all NATIONAL bibliotheques when passing NATIONAL as parameter")
 	void test_list_with_filter_1() {
 		// --------------- Given ---------------
-		libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-		libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-		libraryDAO.save(SCHOOL_LIBRARY_PARIS);
-		libraryDAO.save(SCHOOL_LIBRARY_PARIS);
-		libraryDAO.save(SCHOOL_LIBRARY_PARIS);
-		libraryDAO.save(PUBLIC_LIBRARY_VINCENNES);
+		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
+		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
+		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
+		bibliothequeDAO.save(PUBLIC_Bibliotheque_VINCENNES);
 
 		// --------------- When ---------------
-		final ResponseEntity<Library[]> response = restTemplate.getForEntity("/libraries/type/" + Type.NATIONAL,
-				Library[].class);
+		final ResponseEntity<Bibliotheque[]> response = restTemplate.getForEntity("/bibliotheques/type/" + TypeDeBibliotheque.NATIONALE,
+				Bibliotheque[].class);
 
 		// --------------- Then ---------------
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody()).hasSize(2).allMatch(library -> library.getType().equals(Type.NATIONAL));
+		assertThat(response.getBody()).hasSize(2).allMatch(Bibliotheque -> Bibliotheque.getType().equals(TypeDeBibliotheque.NATIONALE));
 	}
 
 	@Test
-	@DisplayName("Api GET:/libraries/director/surname/{surname} should get all libraries ruled by Garfield when passing Garfield as parameter")
+	@DisplayName("Api GET:/bibliotheques/director/surname/{surname} should get all bibliotheques ruled by Garfield when passing Garfield as parameter")
 	void test_list_with_filter_2() {
 		// --------------- Given ---------------
-		libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-		libraryDAO.save(NATIONAL_LIBRARY_MONTREUIL);
-		libraryDAO.save(SCHOOL_LIBRARY_PARIS);
-		libraryDAO.save(SCHOOL_LIBRARY_PARIS);
-		libraryDAO.save(PUBLIC_LIBRARY_VINCENNES);
+		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
+		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
+		bibliothequeDAO.save(PUBLIC_Bibliotheque_VINCENNES);
 
 		// --------------- When ---------------
-		final ResponseEntity<Library[]> response = restTemplate
-				.getForEntity("/libraries/director/surname/" + "Garfield", Library[].class);
+		final ResponseEntity<Bibliotheque[]> response = restTemplate
+				.getForEntity("/bibliotheques/director/surname/" + "Garfield", Bibliotheque[].class);
 
 		// --------------- Then ---------------
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).hasSize(3)
-		.allMatch(library -> library.getDirector().getSurname().equals("Garfield"));
+		.allMatch(Bibliotheque -> Bibliotheque.getDireceteur().getPrenom().equals("Garfield"));
 	}
 
 }

@@ -10,6 +10,17 @@ public class Adresse {
     private int zip;
     private String ville;
 
+    public Adresse() {
+    }
+
+    public Adresse(int numero, String rue, int zip, String ville) {
+
+        this.numero=numero;
+        this.rue=rue;
+        this.zip=zip;
+        this.ville=ville;
+    }
+
     public int getNumero() {
         return numero;
     }

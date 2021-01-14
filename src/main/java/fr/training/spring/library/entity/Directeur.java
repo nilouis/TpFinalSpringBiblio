@@ -8,6 +8,14 @@ public class Directeur {
     private String nom;
     private String prenom;
 
+    public Directeur() {
+    }
+
+    public Directeur(String nom, String prenom) {
+        this.nom=nom;
+        this.prenom=prenom;
+    }
+
     public String getNom() {
         return nom;
     }

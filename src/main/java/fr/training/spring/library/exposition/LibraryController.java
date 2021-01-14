@@ -50,7 +50,7 @@ public class LibraryController {
 
     //Lister toutes les bibliotheques
     @ApiOperation(value = "Afficher la liste de toutes les bibliothèques", nickname = "findAllBibliotheque", notes = "La liste de toutes les bibliothèque")
-    @GetMapping(value = "/bibliotheques/", produces = { "application/json" })
+    @GetMapping(value = "/bibliotheques", produces = { "application/json" })
     public List<Bibliotheque> getListeToutesBibliotheques(){
         return  bibliothequeService.chercherTouteLesBibliotheques();
     }
@@ -71,7 +71,7 @@ public class LibraryController {
 
     //Mettre à jour une bibliotheque
     @ApiOperation(value = "Mettre à jour une bibliothèque donnée", nickname = "updateGivenLibrary", notes = "Met à jour une bibliothèque existante")
-    @PatchMapping(value = "/bibliotheque/", produces = { "application/json" })
+    @PatchMapping(value = "/bibliotheque", produces = { "application/json" })
     public void patchBibliotheque(@RequestBody final Bibliotheque bibliothqueAMAJ){
         bibliothequeService.updateBiliotheque(bibliothqueAMAJ);
     }
