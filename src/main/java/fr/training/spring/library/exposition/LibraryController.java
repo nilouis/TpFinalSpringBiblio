@@ -1,6 +1,7 @@
 package fr.training.spring.library.exposition;
 
 import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.Livre;
 import fr.training.spring.library.domain.TypeDeBibliotheque;
 import fr.training.spring.library.service.BibliothequeService;
 import io.swagger.annotations.ApiOperation;
@@ -81,5 +82,28 @@ public class LibraryController {
     @DeleteMapping(value="/bibliotheque/{id}", produces = { "application/json" })
     public void deleteBibliothequeById(@PathVariable(value="id") final long idASupprimer){
         bibliothequeService.deleteBibliotheque(idASupprimer);
+    }
+
+
+    //Ajoute un livre dans une bibliothèque
+    @ApiOperation(value="Ajouter un livre dans une bibliothèque", nickname = "addLivre", notes="Ajoute un livre dans une bibliothèque")
+    @PostMapping(value = "/bibliotheque/livre", produces = {"application/json"})
+    public ResponseEntity<Livre> postNouveauLivre(@RequestBody final Bibliotheque bibliothequeARemplir){
+
+        bibliothequeService.ajouterLivre(bibliothequeARemplir);
+        Livre newLivre=bibliothequeARemplir.getCatalogue().get(0);
+
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newLivre.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    //Dans quelle bibliothque peut on trouver un livre
+    @ApiOperation(value="Obtenir les infos d'un livre", nickname = "getLivre", notes="Retrouve les infos d'un livre")
+    @GetMapping(value = "/bibliotheque/livre/{id}", produces = {"application/json"})
+    public Livre getInfoLivre(@PathVariable(value="id") final long idDeLivre){
+
+        return bibliothequeService.rechercherLivre(idDeLivre);
+
     }
 }

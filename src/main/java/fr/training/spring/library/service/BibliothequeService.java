@@ -1,6 +1,7 @@
 package fr.training.spring.library.service;
 
 import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.Livre;
 import fr.training.spring.library.domain.TypeDeBibliotheque;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface BibliothequeService {
     void updateBiliotheque(Bibliotheque bibliothqueAMAJ);
 
     void deleteBibliotheque(long idASupprimer);
+
+    void ajouterLivre(Bibliotheque bibliotheque);
+
+    Livre rechercherLivre(long idDeLivre);
 }

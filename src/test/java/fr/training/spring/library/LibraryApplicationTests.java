@@ -224,7 +224,7 @@ class BibliothequeApplicationTests {
 		// --------------- Then ---------------
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody()).hasSize(3)
-		.allMatch(Bibliotheque -> Bibliotheque.getDireceteur().getPrenom().equals("Garfield"));
+		.allMatch(Bibliotheque -> Bibliotheque.getDirecteur().getPrenom().equals("Garfield"));
 	}
 
 }

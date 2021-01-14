@@ -1,6 +1,7 @@
 package fr.training.spring.library.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Bibliotheque {
@@ -18,23 +19,38 @@ public class Bibliotheque {
     @Embedded
     private Directeur directeur;
 
-    public Bibliotheque(long id, TypeDeBibliotheque type, Adresse adresse, Directeur direceteur) {
+    @ManyToMany(cascade={CascadeType.ALL},fetch = FetchType.LAZY)
+    private List<Livre> catalogue;
+
+    public Bibliotheque(long id, TypeDeBibliotheque type, Adresse adresse, Directeur directeur) {
         this.id = id;
         this.type = type;
         this.adresse = adresse;
-        this.directeur = direceteur;
+        this.directeur = directeur;
     }
 
     public Bibliotheque(){
 
     }
+    public Directeur getDirecteur() {
+        return directeur;
+    }
+
+    public void setDirecteur(Directeur directeur) {
+        this.directeur = directeur;
+    }
+
+    public List<Livre> getCatalogue() {
+        return catalogue;
+    }
+
+    public void setCatalogue(List<Livre> catalogue) {
+        this.catalogue = catalogue;
+    }
+
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public TypeDeBibliotheque getType() {
@@ -53,17 +69,17 @@ public class Bibliotheque {
         this.adresse = adresse;
     }
 
-    public Directeur getDireceteur() {
-        return directeur;
-    }
-
     public void setDireceteur(Directeur direceteur) {
         this.directeur = direceteur;
     }
 
     public void update(Bibliotheque bibliothqueAMAJ) {
         this.setType(bibliothqueAMAJ.getType());
-        this.setDireceteur(bibliothqueAMAJ.getDireceteur());
+        this.setDireceteur(bibliothqueAMAJ.getDirecteur());
         this.setAdresse(bibliothqueAMAJ.getAdresse());
+    }
+
+    public void ajouterLivreAuCatalogue(Livre newLivre) {
+        this.catalogue.add(newLivre);
     }
 }
