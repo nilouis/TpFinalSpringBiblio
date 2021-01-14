@@ -1,8 +1,4 @@
-package fr.training.spring.library.entity;
-
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+package fr.training.spring.library.domain;
 
 
 public enum TypeDeBibliotheque {

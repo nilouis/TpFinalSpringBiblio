@@ -1,7 +1,7 @@
 package fr.training.spring.library.exposition;
 
-import fr.training.spring.library.entity.Bibliotheque;
-import fr.training.spring.library.entity.TypeDeBibliotheque;
+import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.TypeDeBibliotheque;
 import fr.training.spring.library.service.BibliothequeService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;

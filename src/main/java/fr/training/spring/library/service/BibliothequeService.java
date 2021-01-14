@@ -1,8 +1,7 @@
 package fr.training.spring.library.service;
 
-import fr.training.spring.library.entity.Bibliotheque;
-import fr.training.spring.library.entity.TypeDeBibliotheque;
-import org.springframework.stereotype.Service;
+import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.TypeDeBibliotheque;
 
 import java.util.List;
 
