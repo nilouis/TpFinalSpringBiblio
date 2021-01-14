@@ -1,12 +1,10 @@
 package fr.training.spring.library.infrastructure;
 
-import fr.training.spring.library.entity.Bibliotheque;
-import fr.training.spring.library.entity.TypeDeBibliotheque;
+import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.TypeDeBibliotheque;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
-import javax.persistence.Id;
 import java.util.List;
 
 

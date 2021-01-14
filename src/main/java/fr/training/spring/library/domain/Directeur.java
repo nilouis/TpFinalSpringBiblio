@@ -1,4 +1,4 @@
-package fr.training.spring.library.entity;
+package fr.training.spring.library.domain;
 
 import javax.persistence.Embeddable;
 

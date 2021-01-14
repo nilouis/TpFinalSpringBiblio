@@ -1,7 +1,8 @@
 package fr.training.spring.library.service;
 
-import fr.training.spring.library.entity.Bibliotheque;
-import fr.training.spring.library.entity.TypeDeBibliotheque;
+import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.TypeDeBibliotheque;
+import fr.training.spring.library.domain.exception.BibliothequeNotFoundException;
 import fr.training.spring.library.infrastructure.BibliothequeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class BibliothequeServiceImpl implements  BibliothequeService{
     @Override
     @Transactional(readOnly=true)
     public Bibliotheque chercherBibliotheque(long idATrouver) {
-        return bibliothequeDAO.findById(idATrouver).orElseThrow(() -> new EntityNotFoundException("Il n'y a pas de bibliothèque pour le critère fourni, id = " + idATrouver));
+        return bibliothequeDAO.findById(idATrouver).orElseThrow(() -> new BibliothequeNotFoundException("Il n'y a pas de bibliothèque pour le critère fourni, id = " + idATrouver));
     }
 
     @Override

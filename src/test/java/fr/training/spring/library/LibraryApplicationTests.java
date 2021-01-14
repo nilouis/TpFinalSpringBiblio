@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
-import fr.training.spring.library.entity.Adresse;
-import fr.training.spring.library.entity.Bibliotheque;
-import fr.training.spring.library.entity.Directeur;
-import fr.training.spring.library.entity.TypeDeBibliotheque;
+import fr.training.spring.library.domain.Adresse;
+import fr.training.spring.library.domain.Bibliotheque;
+import fr.training.spring.library.domain.Directeur;
+import fr.training.spring.library.domain.TypeDeBibliotheque;
 import fr.training.spring.library.infrastructure.BibliothequeDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -182,8 +182,8 @@ class BibliothequeApplicationTests {
 					HttpMethod.DELETE, null, String.class);
 
 			// --------------- Then ---------------
-			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-			assertThat(response.getBody()).contains("Bibliotheque NOT FOUND");
+			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+			assertThat(response.getBody()).contains("Not Found");
 		}
 	}
 
