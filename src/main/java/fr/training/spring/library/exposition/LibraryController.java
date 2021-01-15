@@ -3,6 +3,9 @@ package fr.training.spring.library.exposition;
 import fr.training.spring.library.domain.Bibliotheque;
 import fr.training.spring.library.domain.Livre;
 import fr.training.spring.library.domain.TypeDeBibliotheque;
+import fr.training.spring.library.exposition.dto.BibliothequeDto;
+import fr.training.spring.library.exposition.dto.LibraryAdapter;
+import fr.training.spring.library.exposition.dto.LightBibliothequeDto;
 import fr.training.spring.library.service.BibliothequeService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -44,36 +47,39 @@ public class LibraryController {
     //Afficher le détail d'une bibliothque si elle existe bien
     @ApiOperation(value = "Afficher le détail d'une bibliothèque si elle existe", nickname = "findBibliotheque", notes = "Affiche une bibliothque à partir de son identifiant")
     @GetMapping(value = "/bibliotheque/{id}", produces = { "application/json" })
-    public Bibliotheque getCatalogueDeBibliotheque(@PathVariable(value = "id") final long idATrouver){
+    public BibliothequeDto getCatalogueDeBibliotheque(@PathVariable(value = "id") final long idATrouver){
 
-        return  bibliothequeService.chercherBibliotheque(idATrouver);
+        return  LibraryAdapter.mapToDto(bibliothequeService.chercherBibliotheque(idATrouver));
     }
 
     //Lister toutes les bibliotheques
     @ApiOperation(value = "Afficher la liste de toutes les bibliothèques", nickname = "findAllBibliotheque", notes = "La liste de toutes les bibliothèque")
     @GetMapping(value = "/bibliotheques", produces = { "application/json" })
-    public List<Bibliotheque> getListeToutesBibliotheques(){
-        return  bibliothequeService.chercherTouteLesBibliotheques();
+    public List<LightBibliothequeDto> getListeToutesBibliotheques(){
+        List<Bibliotheque> bibliothequeListe = bibliothequeService.chercherTouteLesBibliotheques();
+        return  LibraryAdapter.mapToLightBibliothequeDtoListe(bibliothequeListe);
     }
 
     //Lister les bibliotheque d'un certain type
     @ApiOperation(value = "Afficher la liste de toutes les bibliothèques d'un type donné", nickname = "findAllBibliothequeByType", notes = "La liste de toutes les bibliothèque pour un type donné")
     @GetMapping(value = "/bibliotheques/type/{type}", produces = { "application/json" })
-    public List<Bibliotheque> getListeTypeBibliotheque(@PathVariable(value="type") final TypeDeBibliotheque typeAChercher){
-        return bibliothequeService.chercherBibliothequeParType(typeAChercher);
+    public List<LightBibliothequeDto> getListeTypeBibliotheque(@PathVariable(value="type") final TypeDeBibliotheque typeAChercher){
+        List<Bibliotheque> bibliothequeListe = bibliothequeService.chercherBibliothequeParType(typeAChercher);
+        return LibraryAdapter.mapToLightBibliothequeDtoListe(bibliothequeListe);
     }
 
     //Lister les bibliothèque d'un directeur
     @ApiOperation(value = "Afficher la liste de toutes les bibliothèques d'un directeur", nickname = "findAllBibliothequeByName", notes = "La liste de toutes les bibliothèque pour un directeur (nom) donné")
     @GetMapping(value = "/bibliotheques/director/{directorName}", produces = { "application/json" })
-    public List<Bibliotheque> getListeBibliothqueDirecteur(@PathVariable(value="directorName") final String nomAChercher){
-        return bibliothequeService.chercherBibliothequeParNomDeDirecteur(nomAChercher);
+    public List<LightBibliothequeDto> getListeBibliothqueDirecteur(@PathVariable(value="directorName") final String nomAChercher){
+        List<Bibliotheque> bibliothequeListe = bibliothequeService.chercherBibliothequeParNomDeDirecteur(nomAChercher);
+        return LibraryAdapter.mapToLightBibliothequeDtoListe(bibliothequeListe);
     }
 
     //Mettre à jour une bibliotheque
     @ApiOperation(value = "Mettre à jour une bibliothèque donnée", nickname = "updateGivenLibrary", notes = "Met à jour une bibliothèque existante")
-    @PatchMapping(value = "/bibliotheque", produces = { "application/json" })
-    public void patchBibliotheque(@RequestBody final Bibliotheque bibliothqueAMAJ){
+    @PutMapping(value = "/bibliotheque", produces = { "application/json" })
+    public void putBibliotheque(@RequestBody final Bibliotheque bibliothqueAMAJ){
         bibliothequeService.updateBiliotheque(bibliothqueAMAJ);
     }
 
