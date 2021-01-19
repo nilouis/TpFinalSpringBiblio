@@ -32,7 +32,7 @@ public class BibliothequeEntity {
     @Column(name="prenom")
     private String directeurPrenom;
 
-    @ManyToMany(cascade={CascadeType.ALL},fetch = FetchType.LAZY)
+    @ManyToMany(cascade=CascadeType.ALL,fetch = FetchType.LAZY)
     private List<LivreEntity> catalogue;
 
     public BibliothequeEntity() {
@@ -57,9 +57,10 @@ public class BibliothequeEntity {
         this.rueAdresse=newBibliotheque.getAdresse().getRue();
         this.zipAdresse=newBibliotheque.getAdresse().getZip();
         this.villeAdresse=newBibliotheque.getAdresse().getVille();
-
-        List<LivreEntity> newCatalogue= (List<LivreEntity>) newBibliotheque.getCatalogue().stream().map(livre->new LivreEntity(livre)).collect(Collectors.toList());
-        this.catalogue=newCatalogue;
+        if(newBibliotheque.getCatalogue()!=null) {
+            List<LivreEntity> newCatalogue = (List<LivreEntity>) newBibliotheque.getCatalogue().stream().map(livre -> new LivreEntity(livre)).collect(Collectors.toList());
+            this.catalogue = newCatalogue;
+        }
     }
 
     public long getId() {
