@@ -3,13 +3,12 @@ package fr.training.spring.library;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Optional;
 
-import fr.training.spring.library.domain.Adresse;
-import fr.training.spring.library.domain.Bibliotheque;
-import fr.training.spring.library.domain.Directeur;
-import fr.training.spring.library.domain.TypeDeBibliotheque;
+import fr.training.spring.library.domain.*;
 import fr.training.spring.library.infrastructure.BibliothequeDAO;
+import fr.training.spring.library.infrastructure.entity.BibliothequeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,14 +31,28 @@ class BibliothequeApplicationTests {
 	@Autowired
 	private BibliothequeDAO bibliothequeDAO;
 
+	public static final Livre SPRING_IN_ACTION = new Livre(null, "1617294942", "Spring in Action", "Craig Walls", 310,
+			Genre.AMOUR);
+
 	public static final Bibliotheque NATIONAL_Bibliotheque_MONTREUIL = new Bibliotheque(0L, TypeDeBibliotheque.NATIONALE,
 			new Adresse(93, "Rue des Montreuil", 93100, "Montreuil"), new Directeur("NOEL", "Romain"));
+	public static final Bibliotheque NATIONAL_LIBRARY_MONTREUIL2 = new Bibliotheque(0L, TypeDeBibliotheque.SCOLAIRE,
+			new Adresse(3, "Rue de Paris1", 75001, "Paris1"), new Directeur("Romain", "NOEL"));
 	public static final Bibliotheque SCHOOL_Bibliotheque_PARIS = new Bibliotheque(0L, TypeDeBibliotheque.SCOLAIRE,
 			new Adresse(75, "Rue de Paris", 75008, "Paris"), new Directeur("LECHAT", "Garfield"));
 	public static final Bibliotheque SCHOOL_Bibliotheque_PARIS2 = new Bibliotheque(0L, TypeDeBibliotheque.SCOLAIRE,
 			new Adresse(75, "Rue de Paris", 75008, "Paris"), new Directeur("=LOUISE", "Nicolas"));
 	public static final Bibliotheque PUBLIC_Bibliotheque_VINCENNES = new Bibliotheque(0L, TypeDeBibliotheque.PUBLIQUE,
 			new Adresse(94, "Rue de Vincennes", 94200, "Vincennes"), new Directeur("LECHAT", "Garfield"));
+	public static final Bibliotheque DUMMY_LIBRARY = new Bibliotheque(null, null, new Adresse(0, "DUMMY_STREET", 0, "DUMMY_CITY"),
+			new Directeur("DUMMY_NAME", "DUMMY_SURNAME"), Arrays.asList(SPRING_IN_ACTION));
+
+	public static final BibliothequeEntity NATIONAL_LIBRARY_MONTREUIL_JPA = new BibliothequeEntity(NATIONAL_Bibliotheque_MONTREUIL);
+	public static final BibliothequeEntity SCHOOL_LIBRARY_PARIS_JPA = new BibliothequeEntity(SCHOOL_Bibliotheque_PARIS);
+	public static final BibliothequeEntity NATIONAL_LIBRARY_MONTREUIL2_JPA = new BibliothequeEntity(NATIONAL_LIBRARY_MONTREUIL2);
+	public static final BibliothequeEntity SCHOOL_LIBRARY_PARIS2_JPA = new BibliothequeEntity(SCHOOL_Bibliotheque_PARIS2);
+	public static final BibliothequeEntity PUBLIC_LIBRARY_VINCENNES_JPA = new BibliothequeEntity(PUBLIC_Bibliotheque_VINCENNES);
+	public static final BibliothequeEntity DUMMY_LIBRARY_JPA = new BibliothequeEntity(DUMMY_LIBRARY);
 
 	// As long as we have some other integration tests, this is useless
 	// @Test
@@ -50,6 +63,17 @@ class BibliothequeApplicationTests {
 	@BeforeEach
 	public void reset() {
 		bibliothequeDAO.deleteAll();
+		setup();
+	}
+
+	private void setup() {
+		bibliothequeDAO.save(NATIONAL_LIBRARY_MONTREUIL_JPA);
+		bibliothequeDAO.save(SCHOOL_LIBRARY_PARIS_JPA);
+		bibliothequeDAO.save(NATIONAL_LIBRARY_MONTREUIL2_JPA);
+		bibliothequeDAO.save(SCHOOL_LIBRARY_PARIS2_JPA);
+		bibliothequeDAO.save(PUBLIC_LIBRARY_VINCENNES_JPA);
+		bibliothequeDAO.save(DUMMY_LIBRARY_JPA);
+
 	}
 
 	@Nested
@@ -76,7 +100,7 @@ class BibliothequeApplicationTests {
 		void test_read_all_2() {
 			// --------------- Given ---------------
 			// The DB has been reset (see method annotated with @BeforeEach)
-			bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
+			bibliothequeDAO.save(NATIONAL_LIBRARY_MONTREUIL_JPA);
 
 			// --------------- When ---------------
 			// I do a request on /bibliotheques
@@ -123,16 +147,15 @@ class BibliothequeApplicationTests {
 		@DisplayName(" should update the Bibliotheque when passing on a correct ID")
 		void test_update_1() {
 			// --------------- Given ---------------
-			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-			Bibliotheque bibliothequeModifiee=BibliothequeSaved;
+			Bibliotheque bibliothequeModifiee=NATIONAL_Bibliotheque_MONTREUIL;
 			bibliothequeModifiee.setType(TypeDeBibliotheque.SCOLAIRE);
-			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
+			final Long idOfSavedBibliotheque = bibliothequeModifiee.getId();
 
 			// --------------- When ---------------
 			restTemplate.put("/bibliotheque/", bibliothequeModifiee);
 
 			// --------------- Then ---------------
-			final Optional<Bibliotheque> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
+			final Optional<BibliothequeEntity> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
 			assertThat(BibliothequeFromDB).isNotEmpty();
 
 			// TODO : Check equality
@@ -143,8 +166,7 @@ class BibliothequeApplicationTests {
 		@DisplayName(" should send an error when passing on an incorrect ID")
 		void test_update_2() {
 			// --------------- Given ---------------
-			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
+			final Long idOfSavedBibliotheque = NATIONAL_Bibliotheque_MONTREUIL.getId();
 
 			// --------------- When ---------------
 			final ResponseEntity<String> response = restTemplate.exchange("/bibliotheques/" + Long.MAX_VALUE,
@@ -163,14 +185,13 @@ class BibliothequeApplicationTests {
 		@DisplayName(" should delete the Bibliotheque when passing on a correct ID")
 		void test_delete_1() {
 			// --------------- Given ---------------
-			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
+			final Long idOfSavedBibliotheque = NATIONAL_Bibliotheque_MONTREUIL.getId();
 
 			// --------------- When ---------------
 			restTemplate.delete("/bibliotheque/" + idOfSavedBibliotheque);
 
 			// --------------- Then ---------------
-			final Optional<Bibliotheque> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
+			final Optional<BibliothequeEntity> BibliothequeFromDB = bibliothequeDAO.findById(idOfSavedBibliotheque);
 			assertThat(BibliothequeFromDB).isEmpty();
 		}
 
@@ -178,8 +199,7 @@ class BibliothequeApplicationTests {
 		@DisplayName(" should send an error when passing on an incorrect ID")
 		void test_delete_2() {
 			// --------------- Given ---------------
-			final Bibliotheque BibliothequeSaved = bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-			final Long idOfSavedBibliotheque = BibliothequeSaved.getId();
+			final Long idOfSavedBibliotheque = NATIONAL_Bibliotheque_MONTREUIL.getId();
 
 			// --------------- When ---------------
 			final ResponseEntity<String> response = restTemplate.exchange("/bibliotheques/" + Long.MAX_VALUE,
@@ -195,10 +215,7 @@ class BibliothequeApplicationTests {
 	@DisplayName("Api GET:/bibliotheques/type/{type} should return all NATIONAL bibliotheques when passing NATIONAL as parameter")
 	void test_list_with_filter_1() {
 		// --------------- Given ---------------
-		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
-		bibliothequeDAO.save(PUBLIC_Bibliotheque_VINCENNES);
-		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS2);
+		//Rien a faire
 
 		// --------------- When ---------------
 		final ResponseEntity<Bibliotheque[]> response = restTemplate.getForEntity("/bibliotheques/type/" + TypeDeBibliotheque.SCOLAIRE,
@@ -213,9 +230,7 @@ class BibliothequeApplicationTests {
 	@DisplayName("Api GET:/bibliotheques/director/{surname} should get all bibliotheques ruled by Garfield when passing Garfield as parameter")
 	void test_list_with_filter_2() {
 		// --------------- Given ---------------
-		bibliothequeDAO.save(NATIONAL_Bibliotheque_MONTREUIL);
-		bibliothequeDAO.save(SCHOOL_Bibliotheque_PARIS);
-		bibliothequeDAO.save(PUBLIC_Bibliotheque_VINCENNES);
+		//Rien à faire
 
 		// --------------- When ---------------
 		final ResponseEntity<Bibliotheque[]> response = restTemplate

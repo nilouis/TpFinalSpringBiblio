@@ -1,8 +1,6 @@
 package fr.training.spring.library.domain;
 
-import javax.persistence.Embeddable;
 
-@Embeddable
 public class Adresse {
 
     private int numero;

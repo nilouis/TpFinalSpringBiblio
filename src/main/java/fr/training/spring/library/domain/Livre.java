@@ -3,30 +3,25 @@ package fr.training.spring.library.domain;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+
 public class Livre {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="isbn")
     private String  isbn;
 
-    @Column(name="titre")
     private String titre;
 
-    @Column(name="auteur")
     private String auteur;
 
-    @Column(name="nbPage")
     private int nombreDePage;
 
-    @Column(name="genre")
-    @Enumerated(EnumType.STRING)
     private Genre genre;
 
     public Livre() {
+    }
+
+    public Livre(Object o, String s, String spring_in_action, String craig_walls, int i, Genre amour) {
     }
 
     public long getId() {
